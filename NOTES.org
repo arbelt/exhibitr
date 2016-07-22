@@ -1,0 +1,17 @@
+* Alternative specifications
+
+** Underlying representation
+
+Currently lightweight S3 class; could be made into S4 or R6.
+
+- S4 would give a little more built-in consistency checking, but possibly at the
+  expense of flexibility
+- R6 would give quite a bit more structure and perhaps make it easier to "fill
+  in" methods for non-supplied formats. Also could use accessor functions to
+  ensure that types, at least, are correct
+  - built-in dictionary of render methods?
+
+* Interface
+
+- Create data filter elements
+- Generate =tagList= of other elements

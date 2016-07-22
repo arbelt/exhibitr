@@ -1,0 +1,22 @@
+Package: exhibitr
+Title: Unified interface for producing data exhibits
+Version: 0.0.0.9000
+Authors@R: as.person(c(
+    "Albert Wang <albert_z_wang@harvard.edu> [aut, cre]"
+    ))
+Description: Set of helpers to simplify the creation of Shiny exhibits.
+Depends:
+    R (>= 3.3.0)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
+Imports: ensurer,
+    purrr,
+    dplyr,
+    shiny,
+    lazyeval,
+    pryr,
+    DT,
+    rlist
+Remotes: rstudio/DT
