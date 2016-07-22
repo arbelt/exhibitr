@@ -3,7 +3,7 @@
 \docType{class}
 \name{exhibitr-class}
 \alias{$,exhibitr-method}
-\alias{[,exhibitr,ANY,ANY-method}
+\alias{[,exhibitr-method}
 \alias{[[,exhibitr-method}
 \alias{exhibitr}
 \alias{exhibitr-class}
@@ -15,7 +15,7 @@
 
 \S4method{[[}{exhibitr}(x, i, j = NULL, ...)
 
-\S4method{[}{exhibitr,ANY,ANY}(x, i, j = NULL)
+\S4method{[}{exhibitr}(x, i, j = NULL)
 
 \S4method{$}{exhibitr}(x, name)
 }
