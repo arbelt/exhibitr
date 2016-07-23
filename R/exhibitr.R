@@ -194,7 +194,8 @@ setMethod("xb_shiny_module",
 
             ui <- function(id, ...){
               ns <- NS(id)
-              object@shinyOutput(ns("xbcgen"))
+              ## object@shinyOutput(ns("xbcgen"))
+              xb_ui(object, ns("xbcgen"))
             }
 
             server <- function(input, output, session, ...){
@@ -264,8 +265,9 @@ setMethod("xb_tabs_module",
             ui <- function(id, ..., .outer = tabsetPanel){
               ns <- NS(id)
               ids <- elems %>% map(ns)
-              ui_funcs <- xbc_modules %>% map("ui")
-              tagz <- map2(ui_funcs, ids, invoke)
+              ## ui_funcs <- xbc_modules %>% map("ui")
+              ## tagz <- map2(ui_funcs, ids, invoke)
+              tagz <- map2(xbc_list, ids, xb_ui)
               tabargs <- tabtitles %>% map(~ list(title = .x)) %>%
                 list(tagz) %>% purrr::transpose()
               tabz <- tabargs %>% map(lift_dl(tabPanel))
@@ -275,19 +277,30 @@ setMethod("xb_tabs_module",
 
             server <- function(input, output, session, ...){
               .dots = list(...)
+              server_funcs <- map(xbc_list, xb_server_func)
               .f <- function(module, elem){
-                cm_args <- c(module$server, elem, .dots)
-                invoke(callModule, cm_args)
+                ## cm_args <- c(module$server, elem, .dots)
+                cm_args <- c(module, elem, .dots)
+                ## invoke(callModule, cm_args)
+                invoke(xb_module, cm_args)
               }
-              map2(xbc_modules, elems, .f)
+              ## map2(xbc_modules, elems, .f)
+              map2(xbc_list, elems, .f)
             }
 
             list(ui = ui, server = server)
           })
 
+xb_server_func <- function(object, ...) UseMethod("xb_server_func")
 
-setGeneric("xb_server_func",
-           def = function(object, ..., elems = NULL) standardGeneric("xb_server_func"))
+xb_server_func.default <- function(object, ..., elems = NULL){
+  object$server
+}
+
+setGeneric("xb_server_func")
+
+## setGeneric("xb_server_func",
+##            def = function(object, ..., elems = NULL) standardGeneric("xb_server_func"))
 
 setMethod("xb_server_func",
           signature = "xbc_gen",
@@ -312,6 +325,56 @@ setMethod("xb_server_func",
             server
           })
 
-xb_server_func.default <- function(object, ..., elems = NULL){
-  object$server
-}
+#' @importFrom memoise memoise
+xb_srv_m <- memoise(xb_server_func)
+
+#' Generic function for generating ui components.
+#'
+#' @rdname xb_ui
+#' @export
+setGeneric("xb_ui",
+           def = function(object, id, ...) standardGeneric("xb_ui"))
+
+#' @rdname xb_ui
+setMethod(
+  "xb_ui",
+  signature = "xbc_gen",
+  definition = function(object, id, ...){
+    ns <- NS(id)
+    object@shinyOutput(ns("xbcgen"), ...)
+  })
+
+#' @importFrom purrr map2 %||%
+#' @rdname xb_ui
+setMethod(
+  "xb_ui",
+  signature = "exhibitr",
+  definition = function(object, id, ..., elems = NULL){
+    ns <- NS(id)
+    elems <- elems %||% xb_gens(object)
+    ids <- map(elems, ns)
+    tagz <- object[elems] %>% map2(ids, xb_ui)
+    lift(tagList)(tagz)
+  })
+
+setGeneric(
+  "xb_module",
+  def = function(object, id, ...) standardGeneric("xb_module"))
+
+setMethod(
+  "xb_module",
+  signature = "xbc_gen",
+  definition = function(object, id, ...){
+    srvr <- xb_server_func(object)
+    callModule(srvr, id = id, ...)
+  }
+)
+
+setMethod(
+  "xb_module",
+  signature = "exhibitr",
+  definition = function(object, id, ..., elems = NULL){
+    srvr <- xb_server_func(object, elems = elems)
+    callModule(srvr, id = id, ...)
+  }
+)

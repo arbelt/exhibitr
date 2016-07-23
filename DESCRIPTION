@@ -18,5 +18,6 @@ Imports: ensurer,
     lazyeval,
     pryr,
     DT,
-    rlist
+    rlist,
+    memoise
 Remotes: rstudio/DT
