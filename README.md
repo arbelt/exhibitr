@@ -5,7 +5,8 @@ subtitle: Utility package for output generation
 
 ## Overview
 
-**This is alpha software.  API is subject to change with future development**.
+**This is alpha software.  API is subject to change with future development.
+There's also some heavy cleanup still in progress**.
 
 A simple library to help easily easily generate interactive Shiny modules from
 code that produces static exhibits.
